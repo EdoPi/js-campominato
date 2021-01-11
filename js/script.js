@@ -14,12 +14,15 @@ con difficoltà 1 =>  tra 1 e 80
 con difficoltà 2 => tra 1 e 50
 */
 
+//FUNZIONI
 
+// FUNZIONE PER CREARE NUMERI RANDOM
 function randomNumber(min, max) {
   var result = Math.floor(Math.random() * (max + 1 - min) + min);
   return result;
 }
 
+//FUNZIONE PER VERIFICARE CHE L'INPUT IMMESSO RISPECCHI DELLE CARATTERISTICHE
 function isValid(inputNumber){
   if (isNaN(inputNumber)) {
       return false;
@@ -34,49 +37,69 @@ function isValid(inputNumber){
   return true
 }
 
-
-function winning (sceltaUtente, listaBombe){
-  if (listaBombe.includes(sceltaUtente)) {
+// FUNZIONE PER VERIFICARE CHE OGGETTO NON SIA GIà INCLUSO IN UN ARRAY
+function isNotIncluded (firstInput, secondInput){
+  if (secondInput.includes(firstInput)) {
     return false
   }
   return true
 }
 
 
+//FUNZIONE PER ESEGUIRE IL GIOCO
+function gameStart(minBlocks, maxBlocks, totalBombs){
 
-var bombs = [];
-
-
-while(bombs.length < 16) {
-  var bomba = randomNumber(1, 100);
-  if (bombs.includes(bomba) === false) {
-    bombs.push(bomba);
+// PRIMA CREO ARRAY CONTENENTE I NUMERI BOMBA E MI ASSICURO CHE SIANO UNIVOCI
+while(bombsInField.length < totalBombs) {
+  newBomb = randomNumber(minBlocks, maxBlocks);
+  if (isNotIncluded(newBomb, bombsInField)) {
+    bombsInField.push(newBomb);
   }
 }
+console.log(bombsInField);
 
-console.log(bombs);
-
-var listUserNumbers = [];
-
-while (winning (userNumber, bombs) && listUserNumbers.length < (100 - 16)) {
-  var userNumber = parseInt(prompt('scegli un numero tra 1 e 100'));
+//SI AVVIA IL GIOCO
+//IL WHILE SI ARRESTA SOLO SE L'UTENTE INSERISCE UN NUMERO CHE è TRA QUELLI SCELTI DAL COMPUTER ( QUINDI HA PERSO)
+//E SE NON HA RAGGIUNTO IL NUMERO MASSIMO DI TENTATIVI POSSIBILI SENZA TROVARE LA BOMBA ( QUINDI HA VINTO)
+while (isNotIncluded(userNumber, bombsInField) && listUserNumbers.length < (maxBlocks - totalBombs)) {
+  var userNumber = parseInt(prompt('scegli un numero tra ' + minBlocks + ' e ' + maxBlocks));
   if (isValid(userNumber)) {
-    if (listUserNumbers.includes(userNumber) === true) {
+    if (isNotIncluded(userNumber, listUserNumbers) === false) {
       alert('hai già inserito questo numero');
     } else {
-      if (winning(userNumber, bombs) === false) {
+      if (isNotIncluded(userNumber, bombsInField) === false) {
         alert ('hai perso');
       }
       listUserNumbers.push(userNumber);
-      if (listUserNumbers.length === 100 - 16) {
+      if (listUserNumbers.length === maxBlocks - totalBombs) {
         alert ('hai vinto!');
       }
     }
   } else {
-    alert ('input non valido, inserisci un numero compreso tra 1 e 100');
+    alert ('input non valido, inserisci un numero compreso tra ' + minBlocks + ' e ' + maxBlocks);
   }
-
+}
+alert ('il tuo punteggio è ' + listUserNumbers.length);
 }
 
 
-alert ('il tuo punteggio è ' + listUserNumbers.length);
+//VARIABILI GENERALI
+var bombsInField = [];
+var listUserNumbers = [];
+var newBomb;
+
+
+//IL GIOCO!!!!!!!
+switch (prompt('scegli il livello tra 0, 1 o 2')) {
+  case '0':
+    gameStart(1, 100, 16);
+    break;
+  case '1':
+    gameStart(1, 80, 16);
+    break;
+  case '2':
+    gameStart(1, 50, 4);
+    break;
+  default:
+  alert ('devi scrivere o 0 o 1 o 2, a seconda del livello su cui vuoi giocare')
+}
