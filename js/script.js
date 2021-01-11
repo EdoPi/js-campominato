@@ -20,6 +20,30 @@ function randomNumber(min, max) {
   return result;
 }
 
+function isValid(inputNumber){
+  if (isNaN(inputNumber)) {
+      return false;
+  }
+  if (inputNumber > 100) {
+      return false
+  }
+  if (inputNumber < 1) {
+      return false
+  }
+
+  return true
+}
+
+
+function winning (sceltaUtente, listaBombe){
+  if (listaBombe.includes(sceltaUtente)) {
+    return false
+  }
+  return true
+}
+
+
+
 var bombs = [];
 
 
@@ -32,5 +56,27 @@ while(bombs.length < 16) {
 
 console.log(bombs);
 
+var listUserNumbers = [];
 
-var userNumber = parseInt(prompt('scegli un numero tra 1 e 100'));
+while (winning (userNumber, bombs) && listUserNumbers.length < (100 - 16)) {
+  var userNumber = parseInt(prompt('scegli un numero tra 1 e 100'));
+  if (isValid(userNumber)) {
+    if (listUserNumbers.includes(userNumber) === true) {
+      alert('hai già inserito questo numero');
+    } else {
+      if (winning(userNumber, bombs) === false) {
+        alert ('hai perso');
+      }
+      listUserNumbers.push(userNumber);
+      if (listUserNumbers.length === 100 - 16) {
+        alert ('hai vinto!');
+      }
+    }
+  } else {
+    alert ('input non valido, inserisci un numero compreso tra 1 e 100');
+  }
+
+}
+
+
+alert ('il tuo punteggio è ' + listUserNumbers.length);
